@@ -7,10 +7,12 @@ const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
 async function main() {
   const rl = readline.createInterface({input: process.stdin, output: process.stdout})
+
   const messages = [
     {
       role: "system",
-      content: `A smart personal assistant. 
+      content: `A smart personal assistant who answers the asked questions.
+      1. searchWeb({query}: {query: string}) //Search the latest information and realtime data on the internet. 
       current datetime: ${new Date().toUTCString()}`,
     },
   ];
