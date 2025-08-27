@@ -1,4 +1,3 @@
-import readline from "node:readline/promises";
 import Groq from "groq-sdk";
 import { tavily } from "@tavily/core";
 
@@ -9,13 +8,9 @@ export async function generate(userMessage) {
   const messages = [
     {
       role: "system",
-      content: `A smart personal assistant. 
+      content: `you are a smart personal assistant.
       current datetime: ${new Date().toUTCString()}`,
     },
-    // {
-    //   role: "user",
-    //   content: "What is the current weather in New delhi?",
-    // },
   ];
 
   messages.push({
@@ -25,7 +20,6 @@ export async function generate(userMessage) {
 
   while (true) {
     const completion = await groq.chat.completions.create({
-      // top_p: 0.2,
       model: "llama-3.3-70b-versatile",
       temperature: 0,
       messages: messages,
@@ -61,14 +55,12 @@ export async function generate(userMessage) {
     }
 
     for (const tool of toolsCalls) {
-      // console.log("tool: ", tool);
 
       const functionName = tool.function.name;
       const functionParams = tool.function.arguments;
 
       if (functionName === "webSearch") {
         const toolResult = await webSearch(JSON.parse(functionParams));
-        // console.log("Tool result: ", toolResult);
 
         messages.push({
           tool_call_id: tool.id,
@@ -83,7 +75,6 @@ export async function generate(userMessage) {
 
 async function webSearch({ query }) {
   const response = await tvly.search(query);
-  // console.log("Response:", response);
 
   const finalResult = response.results
     .map((result) => result.content)

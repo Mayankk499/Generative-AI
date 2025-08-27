@@ -13,10 +13,6 @@ async function main() {
       content: `A smart personal assistant. 
       current datetime: ${new Date().toUTCString()}`,
     },
-    // {
-    //   role: "user",
-    //   content: "What is the current weather in New delhi?",
-    // },
   ];
 
   while (true) {
