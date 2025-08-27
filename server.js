@@ -12,15 +12,19 @@ app.use(cors());
 app.use(express.json());
 
 app.get('/', (req, res)=> {
-    res.send("Server is On");
+    res.send("Welcome to BuddyBot");
 });
 
 app.post('/chat', async(req, res) => {
-    const {message} = req.body;
+    const {message, threadId} = req.body;
+
+    if(!message || !threadId){
+        return res.status(400).json({message: 'All fields are required'});
+    }
 
     console.log('Message', message);
 
-    const result = await generate(message)
+    const result = await generate(message, threadId)
 
     res.json({message: result})
     
