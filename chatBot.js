@@ -5,8 +5,7 @@ import NodeCache from "node-cache";
 const tvly = tavily({ apiKey: process.env.AVILY_API_KEY });
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
-const cache = new NodeCache({stdTTL: 60 * 60 * 24});
-
+const cache = new NodeCache({ stdTTL: 60 * 60 * 24 });
 
 export async function generate(userMessage, threadId) {
   const baseMessages = [
@@ -24,7 +23,15 @@ export async function generate(userMessage, threadId) {
     content: userMessage,
   });
 
+  const MAX_RETRIES = 5;
+  let count = 0;
+
   while (true) {
+    if (count > MAX_RETRIES) {
+      return "I could not find the result, please try again";
+    }
+    count++;
+
     const completion = await groq.chat.completions.create({
       model: "llama-3.3-70b-versatile",
       temperature: 0,
@@ -58,12 +65,11 @@ export async function generate(userMessage, threadId) {
 
     if (!toolsCalls) {
       cache.set(threadId, messages);
-      
+
       return completion.choices[0].message.content;
     }
 
     for (const tool of toolsCalls) {
-
       const functionName = tool.function.name;
       const functionParams = tool.function.arguments;
 
